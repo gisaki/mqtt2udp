@@ -68,7 +68,8 @@ namespace Mqtt2Udp
             // handle message received
             this.textBox1.Invoke((Action)(() =>
             {
-                textBox1.Text += string.Format("[{0}][{1}]", DateTime.Now, e.Topic);
+                textBox1.Text = string.Empty;
+                textBox1.Text += string.Format("[{0}][{1}]", DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss fff"), e.Topic);
                 string msg = Encoding.UTF8.GetString(e.Message);
                 textBox1.Text += msg;
                 textBox1.Text += "\r\n";
@@ -77,23 +78,59 @@ namespace Mqtt2Udp
                 textBox1.Text += string.Format("[{0}]\r\n", BitConverter.ToString(e.rcvbuf));
 
                 {
-                    // 送受信に利用するIPアドレス、ポート番号
-                    int port = Int32.Parse(textBox_UDPPort.Text);
-                    System.Net.IPAddress ipaddress = System.Net.IPAddress.Parse(textBox_UDPIP.Text);
-                    //System.Net.IPAddress ipaddress = System.Net.IPAddress.Broadcast;
+                    try
+                    {
+                        // 送受信に利用するIPアドレス、ポート番号
+                        int port = Int32.Parse(textBox_UDPPort.Text);
+                        System.Net.IPAddress ipaddress = System.Net.IPAddress.Parse(textBox_UDPIP.Text);
+                        this.udpdst_ = new System.Net.IPEndPoint(ipaddress, port);
 
-                    // 送信データ
-                    byte[] buffer = e.rcvbuf;
-
-                    // UDP送信
-                    var client = new System.Net.Sockets.UdpClient(port);
-                    client.EnableBroadcast = true;
-                    client.Connect(new System.Net.IPEndPoint(ipaddress, port));
-                    client.Send(buffer, buffer.Length);
-                    client.Close();
+                        // 送信データ
+                        byte[] buffer = e.rcvbuf;
+                        // UDP送信
+                        udp_send_aync(buffer);
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine("udp port/ipaddress error({0})", ex.Message);
+                    }
                 }
 
             }));
+        }
+
+        // UDP
+        private System.Net.Sockets.UdpClient udpclient_ = null;
+        System.Net.IPEndPoint udpdst_ = null;
+        private void udp_send_aync(byte[] sndBuffer)
+        {
+            if (this.udpclient_  == null)
+            {
+                this.udpclient_ = new System.Net.Sockets.UdpClient();
+            }
+
+            this.udpclient_.BeginSend(
+                sndBuffer, sndBuffer.Length,
+                udpdst_,
+                new AsyncCallback(udp_send_callback), this.udpclient_
+            );
+        }
+        public static void udp_send_callback(IAsyncResult ar)
+        {
+            System.Net.Sockets.UdpClient udp = (System.Net.Sockets.UdpClient)ar.AsyncState;
+            // 送信終了
+            try
+            {
+                udp.EndSend(ar);
+            }
+            catch (System.Net.Sockets.SocketException ex)
+            {
+                Console.WriteLine("udp send error({0}/{1})", ex.Message, ex.ErrorCode);
+            }
+            catch (ObjectDisposedException ex)
+            {
+                Console.WriteLine("udp has closed({0})", ex.Message);
+            }
         }
 
         private void button_MQTT_Pub_Click(object sender, EventArgs e)
@@ -122,11 +159,14 @@ namespace Mqtt2Udp
             Properties.Settings.Default.udp_port = textBox_UDPPort.Text;
             Properties.Settings.Default.Save();
 
-            if (this.client_ == null)
+            if (this.client_ != null)
             {
-                return;
+                this.client_.Disconnect();
             }
-            this.client_.Disconnect();
+            if (this.udpclient_ != null)
+            {
+                this.udpclient_.Close();
+            }
         }
     }
 }

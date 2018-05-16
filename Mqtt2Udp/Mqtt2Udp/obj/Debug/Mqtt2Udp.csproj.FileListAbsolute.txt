@@ -9,3 +9,14 @@ C:\work\cs\cygwin\home\ki\vs2015_Projects\mqtt2udp\Mqtt2Udp\Mqtt2Udp\obj\Debug\M
 C:\work\cs\cygwin\home\ki\vs2015_Projects\mqtt2udp\Mqtt2Udp\Mqtt2Udp\obj\Debug\Mqtt2Udp.exe
 C:\work\cs\cygwin\home\ki\vs2015_Projects\mqtt2udp\Mqtt2Udp\Mqtt2Udp\obj\Debug\Mqtt2Udp.pdb
 C:\work\cs\cygwin\home\ki\vs2015_Projects\mqtt2udp\Mqtt2Udp\Mqtt2Udp\bin\Debug\M2Mqtt.Net.pdb
+C:\work\cs\cygwin\home\ki\vs2015_Projects\github\mqtt2udp\Mqtt2Udp\Mqtt2Udp\bin\Debug\Mqtt2Udp.exe.config
+C:\work\cs\cygwin\home\ki\vs2015_Projects\github\mqtt2udp\Mqtt2Udp\Mqtt2Udp\obj\Debug\Mqtt2Udp.exe
+C:\work\cs\cygwin\home\ki\vs2015_Projects\github\mqtt2udp\Mqtt2Udp\Mqtt2Udp\obj\Debug\Mqtt2Udp.pdb
+C:\work\cs\cygwin\home\ki\vs2015_Projects\github\mqtt2udp\Mqtt2Udp\Mqtt2Udp\obj\Debug\Mqtt2Udp.csprojResolveAssemblyReference.cache
+C:\work\cs\cygwin\home\ki\vs2015_Projects\github\mqtt2udp\Mqtt2Udp\Mqtt2Udp\obj\Debug\Mqtt2Udp.Form1.resources
+C:\work\cs\cygwin\home\ki\vs2015_Projects\github\mqtt2udp\Mqtt2Udp\Mqtt2Udp\obj\Debug\Mqtt2Udp.Properties.Resources.resources
+C:\work\cs\cygwin\home\ki\vs2015_Projects\github\mqtt2udp\Mqtt2Udp\Mqtt2Udp\obj\Debug\Mqtt2Udp.csproj.GenerateResource.Cache
+C:\work\cs\cygwin\home\ki\vs2015_Projects\github\mqtt2udp\Mqtt2Udp\Mqtt2Udp\bin\Debug\Mqtt2Udp.exe
+C:\work\cs\cygwin\home\ki\vs2015_Projects\github\mqtt2udp\Mqtt2Udp\Mqtt2Udp\bin\Debug\Mqtt2Udp.pdb
+C:\work\cs\cygwin\home\ki\vs2015_Projects\github\mqtt2udp\Mqtt2Udp\Mqtt2Udp\bin\Debug\M2Mqtt.Net.dll
+C:\work\cs\cygwin\home\ki\vs2015_Projects\github\mqtt2udp\Mqtt2Udp\Mqtt2Udp\bin\Debug\M2Mqtt.Net.pdb
