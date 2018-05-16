@@ -44,11 +44,12 @@
             this.label6 = new System.Windows.Forms.Label();
             this.textBox_UDPIP = new System.Windows.Forms.TextBox();
             this.textBox_UDPPort = new System.Windows.Forms.TextBox();
+            this.button_MQTT_Dis = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // button_MQTT_Con
             // 
-            this.button_MQTT_Con.Location = new System.Drawing.Point(12, 81);
+            this.button_MQTT_Con.Location = new System.Drawing.Point(12, 52);
             this.button_MQTT_Con.Name = "button_MQTT_Con";
             this.button_MQTT_Con.Size = new System.Drawing.Size(84, 23);
             this.button_MQTT_Con.TabIndex = 0;
@@ -179,11 +180,22 @@
             this.textBox_UDPPort.TabIndex = 9;
             this.textBox_UDPPort.Text = "1883";
             // 
+            // button_MQTT_Dis
+            // 
+            this.button_MQTT_Dis.Location = new System.Drawing.Point(12, 81);
+            this.button_MQTT_Dis.Name = "button_MQTT_Dis";
+            this.button_MQTT_Dis.Size = new System.Drawing.Size(84, 23);
+            this.button_MQTT_Dis.TabIndex = 10;
+            this.button_MQTT_Dis.Text = "Disconnect";
+            this.button_MQTT_Dis.UseVisualStyleBackColor = true;
+            this.button_MQTT_Dis.Click += new System.EventHandler(this.button_MQTT_Dis_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(459, 334);
+            this.Controls.Add(this.button_MQTT_Dis);
             this.Controls.Add(this.textBox_UDPPort);
             this.Controls.Add(this.textBox_UDPIP);
             this.Controls.Add(this.label6);
@@ -226,6 +238,7 @@
         private System.Windows.Forms.Label label6;
         private System.Windows.Forms.TextBox textBox_UDPIP;
         private System.Windows.Forms.TextBox textBox_UDPPort;
+        private System.Windows.Forms.Button button_MQTT_Dis;
     }
 }
 

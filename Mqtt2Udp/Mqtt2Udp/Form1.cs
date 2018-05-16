@@ -26,6 +26,8 @@ namespace Mqtt2Udp
             textBoxTopicPub.Text = Properties.Settings.Default.topic_pub;
             textBox_UDPIP.Text = Properties.Settings.Default.udp_ip;
             textBox_UDPPort.Text = Properties.Settings.Default.udp_port;
+
+            update_gui();
         }
 
         // サーバ証明書の検証
@@ -39,28 +41,111 @@ namespace Mqtt2Udp
         }
         
         private MqttClient client_ = null;
+        private bool client_ongoing_ = false;
         private void button_MQTT_Con_Click(object sender, EventArgs e)
         {
+            // 連続操作抑止
+            if (this.client_ongoing_)
+            {
+                return;
+            }
+            this.client_ongoing_ = true;
+            update_gui(); // GUI更新
+
+            // すでに接続していれば切断
+            mqtt_close();
+
             string host = textBoxHost.Text;
             string username = textBoxUsername.Text;
             string password = textBoxPassword.Text;
             string topicsub = textBoxTopicSub.Text;
 
-            // create client instance
-            this.client_ = new MqttClient(host, 8883, true, MqttSslProtocols.TLSv1_2, RemoteCertificateValidationCallback, null);
+            try
+            {
+                // create client instance
+                this.client_ = new MqttClient(host, 8883, true, MqttSslProtocols.TLSv1_2, RemoteCertificateValidationCallback, null);
 
-            // register to message received
-            this.client_.MqttMsgPublishReceived += client_MqttMsgPublishReceived;
+                // register to message received
+                this.client_.MqttMsgPublishReceived += client_MqttMsgPublishReceived;
 
-            string clientId = Guid.NewGuid().ToString();
-            this.client_.Connect(clientId, username, password);
+                string clientId = Guid.NewGuid().ToString();
+                this.client_.Connect(clientId, username, password);
 
-            // subscribe to the topic "/home/temperature" with QoS 0
-            this.client_.Subscribe(
-                new string[] { topicsub }, 
-                new byte[] { uPLibrary.Networking.M2Mqtt.Messages.MqttMsgBase.QOS_LEVEL_AT_MOST_ONCE }
-            );
+                // subscribe to the topic "/home/temperature" with QoS 0
+                this.client_.Subscribe(
+                    new string[] { topicsub },
+                    new byte[] { uPLibrary.Networking.M2Mqtt.Messages.MqttMsgBase.QOS_LEVEL_AT_MOST_ONCE }
+                );
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("MQTT Connect error({0})", ex.Message);
+                mqtt_close();
+            }
 
+            this.client_ongoing_ = false;
+            update_gui(); // GUI更新
+
+            textBox1.Text = string.Empty;
+            string msg = ((this.client_ != null) && (this.client_.IsConnected)) ? "MQTT Connected" : "MQTT Connect failed";
+            textBox1.Text += string.Format("[{0}]{1}", DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss fff"), msg);
+        }
+
+        private void button_MQTT_Dis_Click(object sender, EventArgs e)
+        {
+            // 連続操作抑止
+            if (this.client_ongoing_)
+            {
+                return;
+            }
+            this.client_ongoing_ = true;
+            update_gui(); // GUI更新
+
+            // （接続していれば）切断
+            mqtt_close();
+
+            this.client_ongoing_ = false;
+            update_gui(); // GUI更新
+        }
+
+        private void mqtt_close()
+        {
+            if (this.client_ != null)
+            {
+                this.client_.Disconnect();
+            }
+            this.client_ = null;
+            textBox1.Text = string.Empty;
+            string msg = "MQTT Closed";
+            textBox1.Text += string.Format("[{0}]{1}", DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss fff"), msg);
+        }
+
+        private void update_gui()
+        {
+            if (this.client_ongoing_)
+            {
+                button_MQTT_Con.Enabled = false;
+                button_MQTT_Dis.Enabled = false;
+                button_MQTT_Pub.Enabled = false;
+            }
+            else if (this.client_ == null)
+            {
+                button_MQTT_Con.Enabled = true;
+                button_MQTT_Dis.Enabled = false;
+                button_MQTT_Pub.Enabled = false;
+            }
+            else if (this.client_.IsConnected)
+            {
+                button_MQTT_Con.Enabled = false;
+                button_MQTT_Dis.Enabled = true;
+                button_MQTT_Pub.Enabled = true;
+            }
+            else
+            {
+                button_MQTT_Con.Enabled = true;
+                button_MQTT_Dis.Enabled = false;
+                button_MQTT_Pub.Enabled = false;
+            }
         }
 
         private void client_MqttMsgPublishReceived(object sender, uPLibrary.Networking.M2Mqtt.Messages.MqttMsgPublishEventArgs e)
@@ -159,10 +244,7 @@ namespace Mqtt2Udp
             Properties.Settings.Default.udp_port = textBox_UDPPort.Text;
             Properties.Settings.Default.Save();
 
-            if (this.client_ != null)
-            {
-                this.client_.Disconnect();
-            }
+            mqtt_close();
             if (this.udpclient_ != null)
             {
                 this.udpclient_.Close();
