@@ -15,6 +15,9 @@ namespace Mqtt2Udp
 {
     public partial class Form1 : Form
     {
+        // アプリ
+        private IMqtt2UdpUserApp user_app_ = new UserApp();
+
         public Form1()
         {
             InitializeComponent();
@@ -28,6 +31,9 @@ namespace Mqtt2Udp
             textBox_UDPPort.Text = Properties.Settings.Default.udp_port;
 
             update_gui();
+
+            // アプリ
+            user_app_.FormInitialized();
         }
 
         // サーバ証明書の検証
@@ -89,6 +95,12 @@ namespace Mqtt2Udp
             textBox1.Text = string.Empty;
             string msg = ((this.client_ != null) && (this.client_.IsConnected)) ? "MQTT Connected" : "MQTT Connect failed";
             textBox1.Text += string.Format("[{0}]{1}", DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss fff"), msg);
+
+            // アプリ
+            if (this.client_.IsConnected)
+            {
+                user_app_.Connected();
+            }
         }
 
         private void button_MQTT_Dis_Click(object sender, EventArgs e)
@@ -106,6 +118,9 @@ namespace Mqtt2Udp
 
             this.client_ongoing_ = false;
             update_gui(); // GUI更新
+
+            // アプリ
+            user_app_.Disconnected();
         }
 
         private void mqtt_close()
@@ -181,6 +196,8 @@ namespace Mqtt2Udp
                     }
                 }
 
+                // アプリ
+                user_app_.MqttMsgPublishReceived(sender, e);
             }));
         }
 
@@ -249,6 +266,18 @@ namespace Mqtt2Udp
             {
                 this.udpclient_.Close();
             }
+
+            // アプリ
+            user_app_.FormClosed();
         }
+    }
+
+    public interface IMqtt2UdpUserApp
+    {
+        void FormInitialized();
+        void FormClosed();
+        void Connected();
+        void Disconnected();
+        void MqttMsgPublishReceived(object sender, uPLibrary.Networking.M2Mqtt.Messages.MqttMsgPublishEventArgs e);
     }
 }
