@@ -110,7 +110,7 @@ namespace Mqtt2Udp
             textBox1.Text += string.Format("[{0}]{1}", DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss fff"), msg);
 
             // アプリ
-            if (this.client_.IsConnected)
+            if ((this.client_ != null) && (this.client_.IsConnected))
             {
                 user_app_.Connected();
             }
