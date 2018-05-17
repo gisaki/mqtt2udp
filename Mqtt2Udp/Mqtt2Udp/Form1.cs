@@ -17,6 +17,7 @@ namespace Mqtt2Udp
     {
         // アプリ
         private IMqtt2UdpUserApp user_app_ = new UserApp();
+        private System.Timers.Timer user_app_timer_ = null;
 
         public Form1()
         {
@@ -34,6 +35,18 @@ namespace Mqtt2Udp
 
             // アプリ
             user_app_.FormInitialized();
+            // タイマーの生成
+            this.user_app_timer_ = new System.Timers.Timer();
+            this.user_app_timer_.Elapsed += new System.Timers.ElapsedEventHandler(OnElapsed_TimersTimer);
+            this.user_app_timer_.Interval = 1000;
+            // タイマーを開始
+            this.user_app_timer_.Start();
+        }
+
+        private void OnElapsed_TimersTimer(object sender, System.Timers.ElapsedEventArgs e)
+        {
+            // アプリ
+            user_app_.OnElapsed_TimersTimer(sender, e);
         }
 
         // サーバ証明書の検証
@@ -252,6 +265,10 @@ namespace Mqtt2Udp
 
         private void Form1_FormClosed(object sender, FormClosedEventArgs e)
         {
+            // アプリ
+            // タイマーを停止
+            this.user_app_timer_.Stop();
+
             Properties.Settings.Default.host = textBoxHost.Text;
             Properties.Settings.Default.username = textBoxUsername.Text;
             Properties.Settings.Default.password = textBoxPassword.Text;
@@ -279,5 +296,6 @@ namespace Mqtt2Udp
         void Connected();
         void Disconnected();
         void MqttMsgPublishReceived(object sender, uPLibrary.Networking.M2Mqtt.Messages.MqttMsgPublishEventArgs e);
+        void OnElapsed_TimersTimer(object sender, System.Timers.ElapsedEventArgs e);
     }
 }
